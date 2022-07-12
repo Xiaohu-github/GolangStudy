@@ -1,5 +1,6 @@
 /*
 类的继承
+权限只有大小写，GO简化了权限构造
 */
 package main
 
@@ -22,7 +23,7 @@ func (this *Human) info() {
 }
 
 type SuperMan struct {
-	Human
+	Human //继承父类，将类名放到子类结构体中
 	Level int
 }
 
