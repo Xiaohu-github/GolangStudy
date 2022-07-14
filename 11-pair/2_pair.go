@@ -1,3 +1,6 @@
+/*
+* pair 的例子
+ */
 package main
 
 import (
@@ -27,6 +30,7 @@ func main() {
 	//b:pair<type:Book,value:book{}地址>
 	// var b *Book = &Book{}
 	b := &Book{}
+
 	fmt.Printf("b type is %T\n", b)
 	b.ReadBook()
 
@@ -40,7 +44,7 @@ func main() {
 	//定义了一个 Reader interface w
 	var w Writer //w：pair<type:,value:>
 
-	w = r.(Writer) //w:pair<type:Book,value:book{}地址>
+	w = r.(Writer) //w:pair<type:Boo k,value:book{}地址>
 
 	w.WriterBook()
 }
