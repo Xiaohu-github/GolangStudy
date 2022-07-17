@@ -1,3 +1,8 @@
+/**
+*无缓存的channle里面只能放一个值
+*当channel有值，没被消费，就会阻塞
+*当channel为空，读取数据会进行等待，也会阻塞
+ */
 package main
 
 import (

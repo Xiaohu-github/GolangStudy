@@ -30,5 +30,8 @@ func main() {
 		fmt.Println("num=", num)
 	}
 
+	// for {
+	time.Sleep(2 * time.Second)
+	// }
 	fmt.Println("main 结束")
 }
