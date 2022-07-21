@@ -25,3 +25,11 @@
    ```
    1. `h1:hash`:表示整体文件的 zip 文件打开后的全部文件的 "校验和" 来生成的 hash,如果不存在，可能表示依赖的库用不上
    1. `xxx/go.mod h1:hash`: 表示用 go.mod 文件来生成的 hash
+1. 改变版本依赖关系：`go mod edit -replace=zinx@v0.0.0-20200315xxxxxx-f0xxxxx = zinx@v0.0.0-20200221xxxxx-f0xxxx `,go mod 会发生改变：
+   ```
+     odule github.com/aceld/moudles_test
+     go 1.14
+     require github.com/aceld/zinx v0.0.0-20200315xxxxxx-f0xxxxx //indirect
+     repalce zinx v0.0.0-20200315xxxxxx-f0xxxxx => zinx@v0.0.0-20200221xxxxx-f0xxxx
+   ```
+   当依赖切换完成后，本来会从 20220315 去调用源码，现在就会变到 20220221 去调用源码了
