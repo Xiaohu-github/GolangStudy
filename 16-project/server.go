@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"net"
 	"sync"
 )
@@ -45,6 +46,26 @@ func (this *Server) BroadCast(user *User, msg string) {
 	this.Message <- sendMsg
 }
 
+//接收消息并广播
+func (this *Server) receiveMsg(user *User, conn net.Conn) {
+	buf := make([]byte, 4096)
+	for {
+		n, err := conn.Read(buf)
+		if n == 0 {
+			this.BroadCast(user, "下线了")
+			return
+		}
+
+		if err != nil && err != io.EOF {
+			fmt.Println("Conn Read err:", err)
+			return
+		}
+
+		msg := string(buf[:n-1])
+		this.BroadCast(user, msg)
+	}
+}
+
 func (this *Server) Handler(conn net.Conn) {
 	// fmt.Println("连接建立成功")
 	user := NewUser(conn)
@@ -54,6 +75,8 @@ func (this *Server) Handler(conn net.Conn) {
 
 	this.mapLock.Unlock()
 	this.BroadCast(user, "上线了") //广播当前用户上线了
+
+	this.receiveMsg(user, conn)
 }
 
 //启动一个服务端
