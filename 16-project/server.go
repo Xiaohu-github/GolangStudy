@@ -14,6 +14,17 @@ type Server struct {
 	Message   chan string      //消息广播的channel
 }
 
+//new 一个服务
+func NewServer(ip string, port int) *Server {
+	server := &Server{
+		Ip:        ip,
+		Port:      port,
+		OnlineMap: make(map[string]*User),
+		Message:   make(chan string),
+	}
+	return server
+}
+
 //监听广播消息
 func (this *Server) ListenMessage() {
 	for {
@@ -30,7 +41,7 @@ func (this *Server) ListenMessage() {
 //广播消息
 func (this *Server) BroadCast(user *User, msg string) {
 	sendMsg := "[" + user.Addr + "]" + user.Name + ":" + msg
-
+	fmt.Println("来自客户端消息：", sendMsg)
 	this.Message <- sendMsg
 }
 
@@ -70,15 +81,4 @@ func (this *Server) Start() {
 		//处理一些操作
 		go this.Handler(conn)
 	}
-}
-
-//new 一个服务
-func NewServer(ip string, port int) *Server {
-	server := &Server{
-		Ip:        ip,
-		Port:      port,
-		OnlineMap: make(map[string]*User),
-		Message:   make(chan string),
-	} //new 一个服务
-	return server
 }
