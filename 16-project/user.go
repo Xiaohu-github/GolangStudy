@@ -7,15 +7,18 @@ type User struct {
 	Addr string
 	C    chan string
 	conn net.Conn
+
+	Server *Server
 }
 
-func NewUser(conn net.Conn) *User {
+func NewUser(conn net.Conn, server *Server) *User {
 	userAddr := conn.RemoteAddr().String()
 	user := &User{
-		Name: userAddr,
-		Addr: userAddr,
-		C:    make(chan string),
-		conn: conn,
+		Name:   userAddr,
+		Addr:   userAddr,
+		C:      make(chan string),
+		conn:   conn,
+		Server: server,
 	}
 
 	//启动监听当前User channel 的go程
@@ -31,4 +34,29 @@ func (this *User) ListenMessage() {
 
 		this.conn.Write([]byte(msg + "\n"))
 	}
+}
+
+//上线
+func (this *User) Onlie() {
+	//用户上线,将用户加入到 onlineMap 中
+	this.Server.mapLock.Lock()
+	this.Server.OnlineMap[this.Name] = this
+	this.Server.mapLock.Unlock()
+	//广播当前用户上线了
+	this.Server.BroadCast(this, "上线了")
+}
+
+//下线
+func (this *User) Offline() {
+	//用户下线,将用户从 onlineMap 中删除
+	this.Server.mapLock.Lock()
+	delete(this.Server.OnlineMap, this.Name)
+	this.Server.mapLock.Unlock()
+	//广播当前用户下线
+	this.Server.BroadCast(this, "已下线")
+}
+
+//广播消息
+func (this *User) DoMessage(msg string) {
+	this.Server.BroadCast(this, msg)
 }
