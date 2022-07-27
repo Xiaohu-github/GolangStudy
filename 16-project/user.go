@@ -56,7 +56,21 @@ func (this *User) Offline() {
 	this.Server.BroadCast(this, "已下线")
 }
 
+//给当前User对应的客户端发送消息
+func (this *User) SendMsg(msg string) {
+	this.conn.Write([]byte(msg))
+}
+
 //广播消息
 func (this *User) DoMessage(msg string) {
-	this.Server.BroadCast(this, msg)
+	if msg == "who" {
+		this.Server.mapLock.Lock()
+		for _, user := range this.Server.OnlineMap {
+			msg := "[" + user.Addr + "]" + user.Name + ":Online...\n"
+			this.SendMsg(msg)
+		}
+		this.Server.mapLock.Unlock()
+	} else {
+		this.Server.BroadCast(this, msg)
+	}
 }
