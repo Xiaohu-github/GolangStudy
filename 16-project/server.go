@@ -5,6 +5,7 @@ import (
 	"io"
 	"net"
 	"sync"
+	"time"
 )
 
 type Server struct {
@@ -49,21 +50,42 @@ func (this *Server) ListenMessage() {
 func (this *Server) Handler(conn net.Conn) {
 	user := NewUser(conn, this)
 	user.Onlie()
-	buf := make([]byte, 4096)
+
+	isLive := make(chan bool)
+
+	go func() {
+		buf := make([]byte, 4096)
+		for {
+			n, err := conn.Read(buf)
+			if n == 0 {
+				user.Offline()
+				return
+			}
+
+			if err != nil && err != io.EOF {
+				fmt.Println("Conn Read err:", err)
+				return
+			}
+
+			//去除\n
+			msg := string(buf[:n-1])
+
+			user.DoMessage(msg)
+
+			isLive <- true
+		}
+	}()
+
 	for {
-		n, err := conn.Read(buf)
-		if n == 0 {
-			user.Offline()
+		select {
+		//如果用户有在发消息，那么isLive管道里面就有值，而且会接着执行下面的case，但是由于时间没到他就不会执行case里的代码，这样就达到了重置定时器的效果
+		case <-isLive:
+		case <-time.After(time.Second * 10): //十秒之后执行踢出操作
+			user.SendMsg("YOU TIME OUT!")
+			close(user.C)
+			conn.Close()
 			return
 		}
-
-		if err != nil && err != io.EOF {
-			fmt.Println("Conn Read err:", err)
-			return
-		}
-
-		msg := string(buf[:n-1])
-		user.DoMessage(msg)
 	}
 }
 
