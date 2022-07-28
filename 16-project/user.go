@@ -90,7 +90,24 @@ func (this *User) DoMessage(msg string) {
 			this.Name = newName
 			this.SendMsg("Your user name updated !\n")
 		}
+		//私聊
+	} else if len(msg) > 4 && msg[:3] == "to|" {
+		remoteName := strings.Split(msg, "|")[1]
+		if remoteName == "" {
+			this.SendMsg("The message format is incorrect\n")
+		}
+		remoteUser, ok := this.Server.OnlineMap[remoteName]
+		if !ok {
+			this.SendMsg("The user does not exist\n")
+			return
+		}
 
+		content := strings.Split(msg, "|")[2]
+		if content == "" {
+			this.SendMsg("The message can't be empty!\n")
+			return
+		}
+		remoteUser.SendMsg(this.Name + " ToYou: '" + content + "'\n")
 	} else {
 		//广播
 		this.Server.BroadCast(this, msg)

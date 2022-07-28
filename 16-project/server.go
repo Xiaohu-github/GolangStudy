@@ -80,7 +80,7 @@ func (this *Server) Handler(conn net.Conn) {
 		select {
 		//如果用户有在发消息，那么isLive管道里面就有值，而且会接着执行下面的case，但是由于时间没到他就不会执行case里的代码，这样就达到了重置定时器的效果
 		case <-isLive:
-		case <-time.After(time.Second * 10): //十秒之后执行踢出操作
+		case <-time.After(time.Second * 120): //十秒之后执行踢出操作
 			user.SendMsg("YOU TIME OUT!")
 			close(user.C)
 			conn.Close()
