@@ -40,6 +40,7 @@ func (client *Client) DealResponse() {
 	io.Copy(os.Stdout, client.connet)
 }
 
+//菜单
 func (client *Client) menu() bool {
 	var flag int
 	fmt.Println("1.公聊模式")
@@ -60,12 +61,13 @@ func (client *Client) menu() bool {
 
 }
 
-func (clinet *Client) updateName() bool {
+//更新用户名
+func (client *Client) updateName() bool {
 	fmt.Println(">>>>>>请输入用户名")
-	fmt.Scanln(&clinet.Name)
+	fmt.Scanln(&client.Name)
 
-	sendMsg := "rename|" + clinet.Name + "\n"
-	_, err := clinet.connet.Write([]byte(sendMsg))
+	sendMsg := "rename|" + client.Name + "\n"
+	_, err := client.connet.Write([]byte(sendMsg))
 	if err != nil {
 		fmt.Println("conn.Write err:", err)
 		return false
@@ -74,39 +76,92 @@ func (clinet *Client) updateName() bool {
 	return true
 }
 
-func (clinet *Client) Run() {
-	for clinet.flag != 0 {
-		for clinet.menu() != true {
+//公聊模式
+func (client *Client) publicChat() {
+	fmt.Println(">>>>>>请输入聊天内容,exit退出")
+	var chatMsg string
+	fmt.Scanln(&chatMsg)
+
+	for chatMsg != "exit" {
+		if len(chatMsg) != 0 {
+			sendMsg := chatMsg + "\n"
+			_, err := client.connet.Write([]byte(sendMsg))
+			if err != nil {
+				fmt.Println("connet Write error:", err)
+				break
+			}
+		}
+
+		chatMsg = ""
+		fmt.Println(">>>>>>请输入聊天内容,exit退出")
+		fmt.Scanln(&chatMsg)
+	}
+}
+
+func (client *Client) SelectUser() {
+	sendMsg := "who\n"
+	_, err := client.connet.Write([]byte(sendMsg))
+	if err != nil {
+		fmt.Println("connet Write error：", err)
+		return
+	}
+
+}
+
+func (client *Client) PrivateChat() {
+	var remoteName, chatMsg string
+
+	client.SelectUser()
+	fmt.Println(">>>>>请输入聊天对象[用户名]，exit退出")
+	fmt.Scanln(&remoteName)
+
+	for remoteName != "exit" {
+		fmt.Println(">>>>>>>>输入消息内容，exit退出")
+		fmt.Scanln(&chatMsg)
+
+		for chatMsg != "exit" {
+			if len(chatMsg) != 0 {
+
+				sendMsg := "to|" + remoteName + "|" + chatMsg + "\n"
+				_, err := client.connet.Write([]byte(sendMsg))
+				if err != nil {
+					fmt.Println("connet Write error:", err)
+					break
+				}
+
+			}
+
+			chatMsg = ""
+			fmt.Println(">>>>>>>>输入消息内容，exit退出")
+			fmt.Scanln(&chatMsg)
+		}
+
+		client.SelectUser()
+		fmt.Println(">>>>>请输入聊天对象[用户名]，exit退出")
+		fmt.Scanln(&remoteName)
+
+	}
+}
+
+func (client *Client) Run() {
+	for client.flag != 0 {
+		for client.menu() != true {
 
 		}
 		//根据不同的模式处理不同的业务
-		switch clinet.flag {
+		switch client.flag {
 
 		case 1:
 			fmt.Println("公聊模式")
-			var chatMsg string
-			fmt.Println(">>>>>>请输入聊天内容,exit退出")
-			fmt.Scanln(&chatMsg)
-			for chatMsg != "exit" {
-				if len(chatMsg) != 0 {
-					sendMsg := chatMsg + "\n"
-					_, err := clinet.connet.Write([]byte(sendMsg))
-					if err != nil {
-						fmt.Println("connet Write error:", err)
-						break
-					}
-				}
-				chatMsg = ""
-				fmt.Println(">>>>>>请输入聊天内容,exit退出")
-				fmt.Scanln(&chatMsg)
-			}
+			client.publicChat()
 			break
 		case 2:
 			fmt.Println("私聊模式")
+			client.PrivateChat()
 			break
 		case 3:
 			fmt.Println("更新用户名")
-			clinet.updateName()
+			client.updateName()
 			break
 		}
 
