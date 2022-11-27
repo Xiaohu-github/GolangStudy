@@ -26,12 +26,12 @@ const (
 const (
 	//iota 是逐行累加1，同一行是相同的iota,每行逐一计算。
 	//iota 只能出现在 const() 里面
-	a, b = iota + 1, iota + 2 //iota = 0, a = iota+1, b = iota+2  | a=1,b=2
-	c, d                      //iota = 1, c = iota+1, d = iota+2	| c=2,d=3
-	e, f                      //iota = 2, e = iota+1, f = iota+2  | e=3,f=4
+	a, b = iota + 1, iota + 2 //iota = 0, a = iota+1, b = iota+2 | a=1,b=2
+	c, d                      //iota = 1, c = iota+1, d = iota+2 | c=2,d=3
+	e, f                      //iota = 2, e = iota+1, f = iota+2 | e=3,f=4
 
-	g, h = iota * 2, iota * 3 //iota = 3, g = iota*2, h = iota*3	| g=6,h=9
-	i, j                      //iota = 4, i = iota*2, j = ipta*3	| i=8,j=12
+	g, h = iota * 2, iota * 3 //iota = 3, g = iota*2, h = iota*3 | g=6,h=9
+		i, j                     //iota = 4, i = iota*2, j = ipta*3	| i=8,j=12
 )
 
 func main() {
