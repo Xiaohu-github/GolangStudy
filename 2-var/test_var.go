@@ -53,6 +53,7 @@ func main() {
 	var kk, ll = 200, "abcddd"
 	fmt.Println("kk = ", kk, ", ll =", ll)
 
+ //多行变量声明
 	var (
 		vv int    = 500
 		jj string = "dasdsda"
