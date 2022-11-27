@@ -31,7 +31,7 @@ const (
 	e, f                      //iota = 2, e = iota+1, f = iota+2 | e=3,f=4
 
 	g, h = iota * 2, iota * 3 //iota = 3, g = iota*2, h = iota*3 | g=6,h=9
-	i, j                    //iota = 4, i = iota*2, j = iota*3	| i=8,j=12
+	i, j                    //iota = 4, i = iota*2, j = iota*3 | i=8,j=12
 )
 
 func main() {
