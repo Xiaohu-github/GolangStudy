@@ -2,6 +2,7 @@ package main
 
 import "fmt"
 
+//声明全局变量一，二，三方法都可使用，冒等声明会产生错误
 var ga int = 100
 var gb = 200
 
